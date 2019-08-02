@@ -1,0 +1,27 @@
+# based on https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0881-8
+
+# basic read stats: FastQC
+# run this on the node:
+
+~/src/FastQC/fastqc YOUR_OUTPUT_FOLDER/trimmomatic/*.fastq.gz --outdir=YOUR_OUTPUT_FOLDER/QC
+
+# no obvious problems with the files
+# FastQC flags  per-base sequence content: there is non-uniformity in the first ~12 bases. A priming bias of some sort?
+# FastQC flags sequence duplication levels: there was a clear peak at some reads >10 copies before deduplication. These could be rRNA, paralogs, or, of course, PCR duplicates. Similar in all samples.
+
+
+# for RSeQC
+# http://rseqc.sourceforge.net/#download-rseqc
+
+# get yeast GTF in BED format from UCSC; file is provided in code folder
+
+# problem with having all files have the same name is that in the plot we cannot tell them apart any more
+# since we're only doing thus once, go in manually and give them useable names
+# then call from the YOUR_OUTPUT_FOLDER/QC/RSeqQC directory:
+
+geneBody_coverage.py -i `ls -dm ../../*/pseudoalignments*.bam | tr -d ' \n'` -r ensemblGenes_fromUCSC_mod.bed -o RSeQC_geneBodyCoverage
+
+# the samples are extremely similar to each other
+
+# compute these for later use in gene based filtering in R scirpt
+tin.py -i `ls -dm ../../*/pseudoalignments*.bam | tr -d ' \n'` -r ensemblGenes_fromUCSC_mod.bed > RSeQC_TIN
